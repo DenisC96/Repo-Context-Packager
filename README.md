@@ -22,7 +22,7 @@ If Python is not installed, visit https://www.python.org/ to download and instal
 
 ### Step 2
 
-Download **pack-repo.py** to your local machine
+Download **pack-repo.py** in **src** directory to your local machine
 
 ### Step 3
 
@@ -52,7 +52,7 @@ If Python is not installed, visit https://www.python.org/ to download and instal
 
 ### Step 2
 
-Download **pack-repo.py** to your local machine
+Download **pack-repo.py** in **src** directory to your local machine
 
 ### Step 3
 
