@@ -8,14 +8,14 @@ Pack Git Repository into a text file for use in LLM
 
 Check if Python is installed in the system by the following command:
 
-```python --version
-
+```cmd
+python --version
 ```
 
 or
 
-```py --version
-
+```cmd
+py --version
 ```
 
 If Python is not installed, visit https://www.python.org/ to download and install
@@ -28,14 +28,14 @@ Download **pack-repo.py** to your local machine
 
 Run the script by the following command:
 
-```python pack-repo.py repo-path [-o] [output-file-name]
-
+```cmd
+python pack-repo.py repo-path [-o] [output-file-name]
 ```
 
 or
 
-```py pack-repo.py repo-path [-o] [output-file-name]
-
+```cmd
+py pack-repo.py repo-path [-o] [output-file-name]
 ```
 
 ## Instruction for Mac/Linux Users:
@@ -44,8 +44,8 @@ or
 
 Check if Python is installed in the system by the following command:
 
-```python3 --version
-
+```bash
+python3 --version
 ```
 
 If Python is not installed, visit https://www.python.org/ to download and install
@@ -58,6 +58,6 @@ Download **pack-repo.py** to your local machine
 
 Run the script by the following command:
 
-```python3 pack-repo.py repo-path [-o] [output-file-name]
-
+```bash
+python3 pack-repo.py repo-path [-o] [output-file-name]
 ```
