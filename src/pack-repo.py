@@ -5,47 +5,56 @@ from git import Repo
 def open_file(filename):
     f = Path(filename)
     f.write_text("# Repository Context\n\n")
+    f = f.open("a")
     return f
 
 def write_file_location(f, input_path):
     print("Writing file system location...")
     abs_path = Path(input_path).resolve()
-    with f.open("a") as f:
-        f.write("## File System Location\n\n")
-        f.write(str(abs_path) + "\n\n")
+    f.write("## File System Location\n\n")
+    f.write(str(abs_path) + "\n\n")
 
 def write_git_info(f, path):
     print("Writing Git info...")
-    with f.open("a") as f:
-        f.write("## Git Info\n\n")
-        if (Path(path) / ".git").exists():
-            repo = Repo(path)
-            commit = repo.head.commit
+    f.write("## Git Info\n\n")
+    if (Path(path) / ".git").exists():
+        repo = Repo(path)
+        commit = repo.head.commit
 
-            f.write(f"- Commit: {commit.hexsha}\n")
-            f.write(f"- Branch: {repo.active_branch.name}\n")
-            f.write(f"- Author: {commit.author.name} <{commit.author.email}>\n")
-            f.write(f"- Date: {commit.committed_datetime.isoformat()}\n\n")
-        else:
-            f.write("Not a git repository\n\n")
-            
-def write_struct_tree(f):
-    print("***Codes for writing Project Structure Tree to be implemented***")
-    with f.open("a") as f:
-        f.write("## Structure\n\n")
-        f.write("***To be implemented***\n\n")
+        f.write(f"- Commit: {commit.hexsha}\n")
+        f.write(f"- Branch: {repo.active_branch.name}\n")
+        f.write(f"- Author: {commit.author.name} <{commit.author.email}>\n")
+        f.write(f"- Date: {commit.committed_datetime.isoformat()}\n\n")
+    else:
+        f.write("Not a git repository\n\n")
 
-def write_file_contents(f):
+def write_struct_tree(f, path, files):
+    print("Writing Structure Tree...")
+
+    def print_tree(f, path, root_path, prefix=""):
+        f.write(f"{prefix}{path.name}/\n")
+        for child in path.iterdir():
+            if not child.name.startswith("."): #hidden files/directories are not shown for clarity
+                if child.is_dir():
+                    print_tree(f, child, root_path, prefix + "  ")
+                else:
+                    f.write(f"{prefix}  {child.name}\n")
+                    files.append(child.relative_to(root_path)) #add to files list
+
+    f.write("## Structure (hidden files/directories are not shown for clarity)\n\n```\n")
+    path = Path(path).resolve()
+    print_tree(f, path, path)
+    f.write("```\n\n")
+
+def write_file_contents(f, path, files, n_of_lines):
     print("***Codes for writing File Content to be implemented***")
-    with f.open("a") as f:
-        f.write("## File Contents\n\n")
-        f.write("***To be implemented***\n\n")
+    f.write("## File Contents\n\n")
+    f.write("***To be implemented***\n\n")
 
-def write_summary(f):
+def write_summary(f, files, n_of_lines):
     print("***Codes for writing Summary Statistics to be implemented***")
-    with f.open("a") as f:
-        f.write("## Summary\n\n")
-        f.write("***To be implemented***\n\n")
+    f.write("## Summary\n\n")
+    f.write("***To be implemented***\n\n")
 
 if __name__ == "__main__":
     #set argument parser
@@ -58,6 +67,8 @@ if __name__ == "__main__":
     #initialize variables
     path = args.path
     filename = args.output
+    files = []
+    n_of_lines = 0
 
     #open file
     f = open_file(filename)
@@ -67,9 +78,9 @@ if __name__ == "__main__":
     print("Writing file...")
     write_file_location(f, path)
     write_git_info(f, path)
-    write_struct_tree(f)
-    write_file_contents(f)
-    write_summary(f)
+    write_struct_tree(f, path, files)
+    write_file_contents(f, path, files, n_of_lines)
+    write_summary(f, files, n_of_lines)
 
     #program complete
     print(f'All information is saved in "{args.output}"')
