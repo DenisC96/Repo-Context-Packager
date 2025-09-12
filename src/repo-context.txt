@@ -1,0 +1,261 @@
+# Repository Context
+
+## File System Location
+
+/Users/hokkan/Desktop/Canada/0.2. School/3. Seneca College/4th Semester/OSD600/Repo-Context-Packager
+
+## Git Info
+
+- Commit: 68781e86773ec5f4cb2b46ac628e7c52827e72f4
+- Branch: main
+- Author: Hok Kan Cheung <hokkan@connect.hku.hk>
+- Date: 2025-09-12T16:36:33-04:00
+
+## Structure (hidden files/directories are not shown for clarity)
+
+```
+Repo-Context-Packager/
+  LICENSE
+  README.md
+  requirement.txt
+  src/
+    repo-context.txt
+    pack-repo.py
+```
+
+## File Contents
+
+### File: LICENSE
+```
+BSD 2-Clause License
+
+Copyright (c) 2025, DenisC
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+```
+
+### File: README.md
+```
+# Repo-Context-Packager
+
+Pack Git Repository into a text file for use in LLM
+
+## Instruction for Windows Users:
+
+### Step 1
+
+Check if Python is installed in the system by the following command:
+
+```cmd
+python --version
+```
+
+or
+
+```cmd
+py --version
+```
+
+If Python is not installed, visit https://www.python.org/ to download and install
+
+### Step 1.1
+
+Download **requirement.txt** from the repository.
+
+Install dependencies by the following commands:
+
+```cmd
+py -m pip install -r requirement.txt
+```
+
+### Step 2
+
+Download **pack-repo.py** in **src** directory to your local machine
+
+### Step 3
+
+Run the script by the following command:
+
+```cmd
+python pack-repo.py repo-path [-o] [output-file-name]
+```
+
+or
+
+```cmd
+py pack-repo.py repo-path [-o] [output-file-name]
+```
+
+## Instruction for Mac/Linux Users:
+
+### Step 1
+
+Check if Python is installed in the system by the following command:
+
+```bash
+python3 --version
+```
+
+If Python is not installed, visit https://www.python.org/ to download and install
+
+### Step 1.1
+
+Download **requirement.txt** from the repository.
+
+Install dependencies by the following commands:
+
+```bash
+python3 -m pip install -r requirement.txt
+```
+
+### Step 2
+
+Download **pack-repo.py** in **src** directory to your local machine
+
+### Step 3
+
+Run the script by the following command:
+
+```bash
+python3 pack-repo.py repo-path [-o] [output-file-name]
+```
+
+```
+
+### File: requirement.txt
+```
+GitPython>=3.1.0
+pygments>=2.19.0
+```
+
+### File: src/repo-context.txt
+```
+# Repository Context
+
+
+```
+
+### File: src/pack-repo.py
+```
+import argparse
+from pathlib import Path
+from git import Repo
+
+def open_file(filename):
+    f = Path(filename)
+    f.write_text("# Repository Context\n\n")
+    f = f.open("a")
+    return f
+
+def write_file_location(f, input_path):
+    print("Writing file system location...")
+    abs_path = Path(input_path).resolve()
+    f.write("## File System Location\n\n")
+    f.write(str(abs_path) + "\n\n")
+
+def write_git_info(f, path):
+    print("Writing Git info...")
+    f.write("## Git Info\n\n")
+    if (Path(path) / ".git").exists():
+        repo = Repo(path)
+        commit = repo.head.commit
+
+        f.write(f"- Commit: {commit.hexsha}\n")
+        f.write(f"- Branch: {repo.active_branch.name}\n")
+        f.write(f"- Author: {commit.author.name} <{commit.author.email}>\n")
+        f.write(f"- Date: {commit.committed_datetime.isoformat()}\n\n")
+    else:
+        f.write("Not a git repository\n\n")
+
+def write_struct_tree(f, path, files):
+    print("Writing Structure Tree...")
+
+    def print_tree(f, path, root_path, prefix=""):
+        f.write(f"{prefix}{path.name}/\n")
+        for child in path.iterdir():
+            if not child.name.startswith("."): #hidden files/directories are not shown for clarity
+                if child.is_dir():
+                    print_tree(f, child, root_path, prefix + "  ")
+                else:
+                    f.write(f"{prefix}  {child.name}\n")
+                    files.append(child.relative_to(root_path)) #add to files list
+
+    f.write("## Structure (hidden files/directories are not shown for clarity)\n\n```\n")
+    path = Path(path).resolve()
+    print_tree(f, path, path)
+    f.write("```\n\n")
+
+def write_file_contents(f_out, path, files, n_of_lines):
+    print("Writing file contents...")
+    f_out.write("## File Contents\n\n")
+
+    for file in files:
+        abs_file_path = (Path(path) / file).resolve()
+
+        f_out.write(f"### File: {file}\n")
+        f_out.write("```\n")
+        with open(abs_file_path, "r") as f_in:
+            for line in f_in:
+                f_out.write(line)
+                n_of_lines += 1
+        f_out.write("\n```\n\n")
+
+def write_summary(f, files, n_of_lines):
+    print("***Codes for writing Summary Statistics to be implemented***")
+    f.write("## Summary\n\n")
+    f.write("***To be implemented***\n\n")
+
+if __name__ == "__main__":
+    #set argument parser
+    parser = argparse.ArgumentParser("Pack Git Repository into a text file for use in LLM.")
+    parser.add_argument("path", help="Path to the repository / files in the same repository")
+    parser.add_argument("--output", "-o", help="Output filename", default="repo-context.txt")
+    
+    args = parser.parse_args()
+
+    #initialize variables
+    path = args.path
+    filename = args.output
+    files = []
+    n_of_lines = 0
+
+    #open file
+    f = open_file(filename)
+    print(f'File "{filename}" is created...')
+
+    #write to file
+    print("Writing file...")
+    write_file_location(f, path)
+    write_git_info(f, path)
+    write_struct_tree(f, path, files)
+    write_file_contents(f, path, files, n_of_lines)
+    write_summary(f, files, n_of_lines)
+
+    #program complete
+    print(f'All information is saved in "{filename}"')
+```
+
+## Summary
+
+***To be implemented***
+

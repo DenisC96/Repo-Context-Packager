@@ -46,10 +46,20 @@ def write_struct_tree(f, path, files):
     print_tree(f, path, path)
     f.write("```\n\n")
 
-def write_file_contents(f, path, files, n_of_lines):
-    print("***Codes for writing File Content to be implemented***")
-    f.write("## File Contents\n\n")
-    f.write("***To be implemented***\n\n")
+def write_file_contents(f_out, path, files, n_of_lines):
+    print("Writing file contents...")
+    f_out.write("## File Contents\n\n")
+
+    for file in files:
+        abs_file_path = (Path(path) / file).resolve()
+
+        f_out.write(f"### File: {file}\n")
+        f_out.write("```\n")
+        with open(abs_file_path, "r") as f_in:
+            for line in f_in:
+                f_out.write(line)
+                n_of_lines += 1
+        f_out.write("\n```\n\n")
 
 def write_summary(f, files, n_of_lines):
     print("***Codes for writing Summary Statistics to be implemented***")
@@ -83,4 +93,4 @@ if __name__ == "__main__":
     write_summary(f, files, n_of_lines)
 
     #program complete
-    print(f'All information is saved in "{args.output}"')
+    print(f'All information is saved in "{filename}"')
