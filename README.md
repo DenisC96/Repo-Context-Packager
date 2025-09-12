@@ -20,6 +20,16 @@ py --version
 
 If Python is not installed, visit https://www.python.org/ to download and install
 
+### Step 1.1
+
+Download **requirement.txt** from the repository.
+
+Install dependencies by the following commands:
+
+```cmd
+py -m pip install -r requirement.txt
+```
+
 ### Step 2
 
 Download **pack-repo.py** in **src** directory to your local machine
@@ -49,6 +59,16 @@ python3 --version
 ```
 
 If Python is not installed, visit https://www.python.org/ to download and install
+
+### Step 1.1
+
+Download **requirement.txt** from the repository.
+
+Install dependencies by the following commands:
+
+```bash
+python3 -m pip install -r requirement.txt
+```
 
 ### Step 2
 
