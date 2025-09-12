@@ -46,9 +46,11 @@ def write_struct_tree(f, path, files):
     print_tree(f, path, path)
     f.write("```\n\n")
 
-def write_file_contents(f_out, path, files, n_of_lines):
+def write_file_contents(f_out, path, files):
     print("Writing file contents...")
     f_out.write("## File Contents\n\n")
+
+    n_of_lines = 0
 
     for file in files:
         abs_file_path = (Path(path) / file).resolve()
@@ -60,11 +62,13 @@ def write_file_contents(f_out, path, files, n_of_lines):
                 f_out.write(line)
                 n_of_lines += 1
         f_out.write("\n```\n\n")
+    return n_of_lines
 
 def write_summary(f, files, n_of_lines):
-    print("***Codes for writing Summary Statistics to be implemented***")
+    print("Writing summary...")
     f.write("## Summary\n\n")
-    f.write("***To be implemented***\n\n")
+    f.write(f"- Total files: {len(files)}\n")
+    f.write(f"- Total lines: {n_of_lines}\n")
 
 if __name__ == "__main__":
     #set argument parser
@@ -89,7 +93,7 @@ if __name__ == "__main__":
     write_file_location(f, path)
     write_git_info(f, path)
     write_struct_tree(f, path, files)
-    write_file_contents(f, path, files, n_of_lines)
+    n_of_lines = write_file_contents(f, path, files)
     write_summary(f, files, n_of_lines)
 
     #program complete
