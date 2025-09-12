@@ -1,6 +1,8 @@
 import argparse
 from pathlib import Path
 from git import Repo
+from pygments.lexers import guess_lexer_for_filename
+from pygments.util import ClassNotFound
 
 def open_file(filename):
     f = Path(filename)
@@ -56,7 +58,14 @@ def write_file_contents(f_out, path, files):
         abs_file_path = (Path(path) / file).resolve()
 
         f_out.write(f"### File: {file}\n")
-        f_out.write("```\n")
+        
+        #determine any programming language used in the file
+        try:
+            lexer = guess_lexer_for_filename(abs_file_path.name, abs_file_path.read_text())
+            f_out.write(f"```{lexer.name}\n")
+        except ClassNotFound:
+            f_out.write("```\n")
+
         with open(abs_file_path, "r") as f_in:
             for line in f_in:
                 f_out.write(line)
