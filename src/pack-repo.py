@@ -10,17 +10,27 @@ def open_file(filename):
     f = f.open("a")
     return f
 
-def write_file_location(f, input_path):
+def write_file_location(f, paths, path_is_dir):
     print("Writing file system location...")
-    abs_path = Path(input_path).resolve()
+    abs_path = None
+    if path_is_dir:
+        abs_path = Path(paths[0]).resolve()
+    else:
+        abs_path = Path(paths[0]).parent.resolve()
     f.write("## File System Location\n\n")
     f.write(str(abs_path) + "\n\n")
 
-def write_git_info(f, path):
+def write_git_info(f, paths, path_is_dir):
     print("Writing Git info...")
     f.write("## Git Info\n\n")
-    if (Path(path) / ".git").exists():
-        repo = Repo(path)
+    parent_path = None
+    if path_is_dir:
+        parent_path = Path(paths[0])
+    else:
+        parent_path = Path(paths[0]).parent
+
+    if (parent_path / ".git").exists():
+        repo = Repo(parent_path)
         commit = repo.head.commit
 
         f.write(f"- Commit: {commit.hexsha}\n")
@@ -30,7 +40,7 @@ def write_git_info(f, path):
     else:
         f.write("Not a git repository\n\n")
 
-def write_struct_tree(f, path, files):
+def write_struct_tree(f, paths, files, path_is_dir):
     print("Writing Structure Tree...")
 
     def print_tree(f, path, root_path, prefix=""):
@@ -44,21 +54,35 @@ def write_struct_tree(f, path, files):
                     files.append(child.relative_to(root_path)) #add to files list
 
     f.write("## Structure (hidden files/directories are not shown for clarity)\n\n```\n")
-    path = Path(path).resolve()
-    print_tree(f, path, path)
+    parent_path = None
+    if path_is_dir:
+        parent_path = Path(paths[0]).resolve()
+    else:
+        parent_path = Path(paths[0]).parent.resolve()
+    print_tree(f, parent_path, parent_path)
     f.write("```\n\n")
 
-def write_file_contents(f_out, path, files):
+def write_file_contents(f_out, paths, files, path_is_dir):
     print("Writing file contents...")
     f_out.write("## File Contents\n\n")
 
     n_of_lines = 0
 
+    parent_path = None
+    if path_is_dir:
+        parent_path = Path(paths[0])
+    else:
+        parent_path = Path(paths[0]).parent
+        files.clear()
+        for path in paths:
+            path = Path(path).relative_to(parent_path)
+            files.append(path)
+
     for file in files:
-        abs_file_path = (Path(path) / file).resolve()
+        abs_file_path = (parent_path / file).resolve()
 
         f_out.write(f"### File: {file}\n")
-        
+
         #determine any programming language used in the file
         try:
             lexer = guess_lexer_for_filename(abs_file_path.name, abs_file_path.read_text())
@@ -82,27 +106,39 @@ def write_summary(f, files, n_of_lines):
 if __name__ == "__main__":
     #set argument parser
     parser = argparse.ArgumentParser("Pack Git Repository into a text file for use in LLM.")
-    parser.add_argument("path", help="Path to the repository / files in the same repository")
+    parser.add_argument("paths", nargs="+", help="Path to the repository / files in the same repository")
+    parser.add_argument("--version", "-v", action="version", version="repo-context-packager v0.1")
     parser.add_argument("--output", "-o", help="Output filename", default="repo-context.txt")
-    
+
     args = parser.parse_args()
 
     #initialize variables
-    path = args.path
+    paths = args.paths
     filename = args.output
     files = []
     n_of_lines = 0
+    path_is_dir = False
+
+    #ensure that the paths input are either one directory/file, or multiple files in the same directory
+    if len(paths) > 1:
+        parent_path = Path(paths[0]).parent.resolve()
+        for path in paths:
+            path = Path(path)
+            if not path.is_file() or path.parent.resolve() != parent_path:
+                raise ValueError("Either one file/directory, or multiple files in the same directory can be entered.")
+    elif Path(paths[0]).is_dir():
+        path_is_dir = True
 
     #open file
     f = open_file(filename)
     print(f'File "{filename}" is created...')
 
-    #write to file
+    #write to file   
     print("Writing file...")
-    write_file_location(f, path)
-    write_git_info(f, path)
-    write_struct_tree(f, path, files)
-    n_of_lines = write_file_contents(f, path, files)
+    write_file_location(f, paths, path_is_dir)
+    write_git_info(f, paths, path_is_dir)
+    write_struct_tree(f, paths, files, path_is_dir)
+    n_of_lines = write_file_contents(f, paths, files, path_is_dir)
     write_summary(f, files, n_of_lines)
 
     #program complete
