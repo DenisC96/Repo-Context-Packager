@@ -58,7 +58,8 @@ def write_file_contents(f_out, path, files):
     for file in files:
         abs_file_path = (Path(path) / file).resolve()
         if check_recent_changes(abs_file_path, args.recent):
-            f_out.write(f"### File: {file}\n")
+            days = int((time.time() - abs_file_path.stat().st_mtime) / 86400)
+            f_out.write(f"### File: {file} (modified {days} days ago)\n")
             
             #determine any programming language used in the file
             try:
