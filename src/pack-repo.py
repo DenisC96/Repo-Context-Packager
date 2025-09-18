@@ -54,10 +54,12 @@ def write_file_contents(f_out, path, files):
     f_out.write("## File Contents\n\n")
 
     n_of_lines = 0
+    n_of_recent = 0
 
     for file in files:
         abs_file_path = (Path(path) / file).resolve()
         if check_recent_changes(abs_file_path, args.recent):
+            n_of_recent += 1
             days = int((time.time() - abs_file_path.stat().st_mtime) / 86400)
             f_out.write(f"### File: {file} (modified {days} days ago)\n")
             
@@ -73,12 +75,13 @@ def write_file_contents(f_out, path, files):
                     f_out.write(line)
                     n_of_lines += 1
             f_out.write("\n```\n\n")
-    return n_of_lines
+    return n_of_recent, n_of_lines
 
-def write_summary(f, files, n_of_lines):
+def write_summary(f, files, n_of_recent, n_of_lines):
     print("Writing summary...")
     f.write("## Summary\n\n")
     f.write(f"- Total files: {len(files)}\n")
+    f.write(f"- Total recent files: {n_of_recent}\n")
     f.write(f"- Total lines: {n_of_lines}\n")
 
 def check_recent_changes(file, days):
@@ -101,6 +104,7 @@ if __name__ == "__main__":
     filename = args.output
     files = []
     n_of_lines = 0
+    n_of_recent = 0
 
     #open file
     f = open_file(filename)
@@ -111,8 +115,8 @@ if __name__ == "__main__":
     write_file_location(f, path)
     write_git_info(f, path)
     write_struct_tree(f, path, files)
-    n_of_lines = write_file_contents(f, path, files)
-    write_summary(f, files, n_of_lines)
+    n_of_recent, n_of_lines = write_file_contents(f, path, files)
+    write_summary(f, files, n_of_recent, n_of_lines)
 
     #program complete
     print(f'All information is saved in "{filename}"')
