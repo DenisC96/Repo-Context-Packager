@@ -84,6 +84,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("Pack Git Repository into a text file for use in LLM.")
     parser.add_argument("path", help="Path to the repository / files in the same repository")
     parser.add_argument("--output", "-o", help="Output filename", default="repo-context.txt")
+    parser.add_argument("--recent", "-r", help="Only include files modified within the last 7 days", default=7)
     
     args = parser.parse_args()
 
