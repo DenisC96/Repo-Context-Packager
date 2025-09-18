@@ -39,13 +39,13 @@ Download **pack-repo.py** in **src** directory to your local machine
 Run the script by the following command:
 
 ```cmd
-python pack-repo.py repo-path [-o] [output-file-name]
+python pack-repo.py repo-path [-r [DAYS]] [-o] [output-file-name]
 ```
 
 or
 
 ```cmd
-py pack-repo.py repo-path [-o] [output-file-name]
+py pack-repo.py repo-path [-r [DAYS]] [-o] [output-file-name]
 ```
 
 ## Instruction for Mac/Linux Users:
@@ -79,5 +79,5 @@ Download **pack-repo.py** in **src** directory to your local machine
 Run the script by the following command:
 
 ```bash
-python3 pack-repo.py repo-path [-o] [output-file-name]
+python3 pack-repo.py repo-path [-r [DAYS]] [-o] [output-file-name]
 ```
