@@ -84,7 +84,10 @@ def write_summary(f, files, n_of_recent, n_of_lines):
     f.write(f"- Total recent files: {n_of_recent}\n")
     f.write(f"- Total lines: {n_of_lines}\n")
 
-def check_recent_changes(file, days):
+def check_recent_changes(file, days=None):
+    if not days:
+        return True # No cutoff for recent given; display all files
+    
     now = time.time()
     cutoff = now - days * 86400
 
