@@ -1,4 +1,5 @@
 import argparse
+import sys
 from pathlib import Path
 from git import Repo
 from pygments.lexers import guess_lexer_for_filename
@@ -10,19 +11,24 @@ def open_file(filename):
     f = f.open("a")
     return f
 
-def write_file_location(f, paths, path_is_dir):
-    print("Writing file system location...")
+def write_file_location(ostream, paths, path_is_dir):
+    if ostream != sys.stdout:
+        print("Writing file system location...")
+
     abs_path = None
     if path_is_dir:
         abs_path = Path(paths[0]).resolve()
     else:
         abs_path = Path(paths[0]).parent.resolve()
-    f.write("## File System Location\n\n")
-    f.write(str(abs_path) + "\n\n")
+    
+    ostream.write("## File System Location\n\n")
+    ostream.write(str(abs_path) + "\n\n")
 
-def write_git_info(f, paths, path_is_dir):
-    print("Writing Git info...")
-    f.write("## Git Info\n\n")
+def write_git_info(ostream, paths, path_is_dir):
+    if ostream != sys.stdout:
+        print("Writing Git info...")
+    ostream.write("## Git Info\n\n")
+
     parent_path = None
     if path_is_dir:
         parent_path = Path(paths[0])
@@ -33,38 +39,43 @@ def write_git_info(f, paths, path_is_dir):
         repo = Repo(parent_path)
         commit = repo.head.commit
 
-        f.write(f"- Commit: {commit.hexsha}\n")
-        f.write(f"- Branch: {repo.active_branch.name}\n")
-        f.write(f"- Author: {commit.author.name} <{commit.author.email}>\n")
-        f.write(f"- Date: {commit.committed_datetime.isoformat()}\n\n")
+        ostream.write(f"- Commit: {commit.hexsha}\n")
+        ostream.write(f"- Branch: {repo.active_branch.name}\n")
+        ostream.write(f"- Author: {commit.author.name} <{commit.author.email}>\n")
+        ostream.write(f"- Date: {commit.committed_datetime.isoformat()}\n\n")
     else:
-        f.write("Not a git repository\n\n")
+        ostream.write("Not a git repository\n\n")
 
-def write_struct_tree(f, paths, files, path_is_dir):
-    print("Writing Structure Tree...")
+def write_struct_tree(ostream, paths, files, path_is_dir):
+    if ostream != sys.stdout:
+        print("Writing Structure Tree...")
 
-    def print_tree(f, path, root_path, prefix=""):
-        f.write(f"{prefix}{path.name}/\n")
+    def print_tree(ostream, path, root_path, prefix=""):
+        ostream.write(f"{prefix}{path.name}/\n")
         for child in path.iterdir():
             if not child.name.startswith("."): #hidden files/directories are not shown for clarity
                 if child.is_dir():
-                    print_tree(f, child, root_path, prefix + "  ")
+                    print_tree(ostream, child, root_path, prefix + "  ")
                 else:
-                    f.write(f"{prefix}  {child.name}\n")
+                    ostream.write(f"{prefix}  {child.name}\n")
                     files.append(child.relative_to(root_path)) #add to files list
 
-    f.write("## Structure (hidden files/directories are not shown for clarity)\n\n```\n")
+    ostream.write("## Structure (hidden files/directories are not shown for clarity)\n\n```\n")
+
     parent_path = None
     if path_is_dir:
         parent_path = Path(paths[0]).resolve()
     else:
         parent_path = Path(paths[0]).parent.resolve()
-    print_tree(f, parent_path, parent_path)
-    f.write("```\n\n")
 
-def write_file_contents(f_out, paths, files, path_is_dir):
-    print("Writing file contents...")
-    f_out.write("## File Contents\n\n")
+    print_tree(ostream, parent_path, parent_path)
+    ostream.write("```\n\n")
+
+def write_file_contents(ostream, paths, files, path_is_dir):
+    if ostream != sys.stdout:
+        print("Writing file contents...")
+
+    ostream.write("## File Contents\n\n")
 
     n_of_lines = 0
 
@@ -81,34 +92,35 @@ def write_file_contents(f_out, paths, files, path_is_dir):
     for file in files:
         abs_file_path = (parent_path / file).resolve()
 
-        f_out.write(f"### File: {file}\n")
+        ostream.write(f"### File: {file}\n")
 
         #determine any programming language used in the file
         try:
             lexer = guess_lexer_for_filename(abs_file_path.name, abs_file_path.read_text())
-            f_out.write(f"```{lexer.name}\n")
+            ostream.write(f"```{lexer.name}\n")
         except ClassNotFound:
-            f_out.write("```\n")
+            ostream.write("```\n")
 
         with open(abs_file_path, "r") as f_in:
             for line in f_in:
-                f_out.write(line)
+                ostream.write(line)
                 n_of_lines += 1
-        f_out.write("\n```\n\n")
+        ostream.write("\n```\n\n")
     return n_of_lines
 
-def write_summary(f, files, n_of_lines):
-    print("Writing summary...")
-    f.write("## Summary\n\n")
-    f.write(f"- Total files: {len(files)}\n")
-    f.write(f"- Total lines: {n_of_lines}\n")
+def write_summary(ostream, files, n_of_lines):
+    if ostream != sys.stdout:
+        print("Writing summary...")
+    ostream.write("## Summary\n\n")
+    ostream.write(f"- Total files: {len(files)}\n")
+    ostream.write(f"- Total lines: {n_of_lines}\n")
 
 if __name__ == "__main__":
     #set argument parser
     parser = argparse.ArgumentParser("Pack Git Repository into a text file for use in LLM.")
     parser.add_argument("paths", nargs="+", help="Path to the repository / files in the same repository")
     parser.add_argument("--version", "-v", action="version", version="repo-context-packager v0.1")
-    parser.add_argument("--output", "-o", help="Output filename", default="repo-context.txt")
+    parser.add_argument("--output", "-o", nargs="?", help="Output filename", default=None, const="repo-context.txt")
 
     args = parser.parse_args()
 
@@ -129,17 +141,22 @@ if __name__ == "__main__":
     elif Path(paths[0]).is_dir():
         path_is_dir = True
 
-    #open file
-    f = open_file(filename)
-    print(f'File "{filename}" is created...')
+    #set output stream
+    ostream = sys.stdout
+    if filename:
+        ostream = open_file(filename)
+        print(f'File "{filename}" is created...')
 
-    #write to file   
-    print("Writing file...")
-    write_file_location(f, paths, path_is_dir)
-    write_git_info(f, paths, path_is_dir)
-    write_struct_tree(f, paths, files, path_is_dir)
-    n_of_lines = write_file_contents(f, paths, files, path_is_dir)
-    write_summary(f, files, n_of_lines)
+    #write to output stream
+    if filename:
+        print("Writing file...")
+    write_file_location(ostream, paths, path_is_dir)
+    write_git_info(ostream, paths, path_is_dir)
+    write_struct_tree(ostream, paths, files, path_is_dir)
+    n_of_lines = write_file_contents(ostream, paths, files, path_is_dir)
+    write_summary(ostream, files, n_of_lines)
 
     #program complete
-    print(f'All information is saved in "{filename}"')
+    if filename:
+        ostream.close()
+        print(f'All information is saved in "{filename}"')
