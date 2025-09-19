@@ -55,9 +55,9 @@ def write_struct_tree(ostream, paths, files, path_is_dir, inc_exts, show_hidden)
         ostream.write(f"{prefix}{path.name}/\n")
         child_paths = None
         if show_hidden:
-            child_paths = [child for child in path.iterdir() if not child.name.startswith(".git")]
+            child_paths = [child for child in path.iterdir() if not child.name.startswith(".git")] #ignore only .git files
         else:
-            child_paths = [child for child in path.iterdir() if not child.name.startswith(".")]
+            child_paths = [child for child in path.iterdir() if not child.name.startswith(".")] #ignore all hidden files
 
         for child in child_paths:
             if child.is_dir():
@@ -71,8 +71,10 @@ def write_struct_tree(ostream, paths, files, path_is_dir, inc_exts, show_hidden)
                         ostream.write(f"{prefix}  {child.name}\n")
                         files.append(child.relative_to(root_path)) #add to files list
 
-
-    ostream.write("## Structure (hidden files/directories are not shown for clarity)\n\n```\n")
+    if show_hidden:
+        ostream.write("## Structure\n\n```\n")
+    else:
+        ostream.write("## Structure (hidden files/directories are not shown for clarity)\n\n```\n")
 
     parent_path = None
     if path_is_dir:
