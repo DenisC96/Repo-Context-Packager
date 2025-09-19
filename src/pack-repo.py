@@ -1,5 +1,6 @@
 import argparse
 import sys
+import re
 from pathlib import Path
 from git import Repo
 from pygments.lexers import guess_lexer_for_filename
@@ -46,19 +47,30 @@ def write_git_info(ostream, paths, path_is_dir):
     else:
         ostream.write("Not a git repository\n\n")
 
-def write_struct_tree(ostream, paths, files, path_is_dir):
+def write_struct_tree(ostream, paths, files, path_is_dir, inc_exts, show_hidden):
     if ostream != sys.stdout:
         print("Writing Structure Tree...")
 
     def print_tree(ostream, path, root_path, prefix=""):
         ostream.write(f"{prefix}{path.name}/\n")
-        for child in path.iterdir():
-            if not child.name.startswith("."): #hidden files/directories are not shown for clarity
-                if child.is_dir():
-                    print_tree(ostream, child, root_path, prefix + "  ")
-                else:
+        child_paths = None
+        if show_hidden:
+            child_paths = [child for child in path.iterdir() if not child.name.startswith(".git")]
+        else:
+            child_paths = [child for child in path.iterdir() if not child.name.startswith(".")]
+
+        for child in child_paths:
+            if child.is_dir():
+                print_tree(ostream, child, root_path, prefix + "  ")
+            else:
+                if inc_exts == "all":
                     ostream.write(f"{prefix}  {child.name}\n")
                     files.append(child.relative_to(root_path)) #add to files list
+                else:
+                    if child.suffix in inc_exts:
+                        ostream.write(f"{prefix}  {child.name}\n")
+                        files.append(child.relative_to(root_path)) #add to files list
+
 
     ostream.write("## Structure (hidden files/directories are not shown for clarity)\n\n```\n")
 
@@ -98,14 +110,18 @@ def write_file_contents(ostream, paths, files, path_is_dir):
         try:
             lexer = guess_lexer_for_filename(abs_file_path.name, abs_file_path.read_text())
             ostream.write(f"```{lexer.name}\n")
+
+            with open(abs_file_path, "r") as f_in:
+                for line in f_in:
+                    ostream.write(line)
+                    n_of_lines += 1
+            ostream.write("\n```\n\n")
         except ClassNotFound:
             ostream.write("```\n")
-
-        with open(abs_file_path, "r") as f_in:
-            for line in f_in:
-                ostream.write(line)
-                n_of_lines += 1
-        ostream.write("\n```\n\n")
+            sys.stderr.write(f"Unable to determine language used in file {file}\n")
+        except UnicodeDecodeError:
+            ostream.write("**Unable to read file**\n\n")
+            sys.stderr.write(f"Unable to read file {file}\n")
     return n_of_lines
 
 def write_summary(ostream, files, n_of_lines):
@@ -121,6 +137,8 @@ if __name__ == "__main__":
     parser.add_argument("paths", nargs="+", help="Path to the repository / files in the same repository")
     parser.add_argument("--version", "-v", action="version", version="repo-context-packager v0.1")
     parser.add_argument("--output", "-o", nargs="?", help="Output filename", default=None, const="repo-context.txt")
+    parser.add_argument("--include", "-i", help='Extensions to be included, separated by ",", e.g. "*.js,*.txt"')
+    parser.add_argument("--all", "-a", action="store_true", help='Show all files including hidden files (files that start with ".")')
 
     args = parser.parse_args()
 
@@ -130,6 +148,16 @@ if __name__ == "__main__":
     files = []
     n_of_lines = 0
     path_is_dir = False
+    show_hidden = args.all
+    
+    inc_exts = "all"
+    if args.include != None:
+        inc_exts = args.include.split(",")
+        for i in range(len(inc_exts)):
+            inc_exts[i] = inc_exts[i].strip()
+            inc_exts[i] = inc_exts[i].lstrip("*")
+            if not bool(re.match(r"^\.[a-zA-Z0-9]+$", inc_exts[i])):
+                raise ValueError('Invalid extensions, please check your input. Valid extension e.g. "*.js,*.txt"')
 
     #ensure that the paths input are either one directory/file, or multiple files in the same directory
     if len(paths) > 1:
@@ -152,7 +180,7 @@ if __name__ == "__main__":
         print("Writing file...")
     write_file_location(ostream, paths, path_is_dir)
     write_git_info(ostream, paths, path_is_dir)
-    write_struct_tree(ostream, paths, files, path_is_dir)
+    write_struct_tree(ostream, paths, files, path_is_dir, inc_exts, show_hidden)
     n_of_lines = write_file_contents(ostream, paths, files, path_is_dir)
     write_summary(ostream, files, n_of_lines)
 
