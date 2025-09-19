@@ -3,12 +3,30 @@ from pathlib import Path
 from git import Repo
 from pygments.lexers import guess_lexer_for_filename
 from pygments.util import ClassNotFound
+from datetime import datetime, timedelta
 
 def open_file(filename):
     f = Path(filename)
     f.write_text("# Repository Context\n\n")
     f = f.open("a")
     return f
+
+# Lab2 - add --recent flag (Added by Steven Hur)
+def is_recently_modified(file_path, days = 7):
+    # check file if modified within the last 7 days
+    try:
+        file_last_time = file_path.stat().st_mtime
+        now = datetime.now().timestamp() # current time
+        time_difference = now - file_last_time
+        return time_difference <= timedelta(days=days).total_seconds()
+    except FileNotFoundError:
+        return False
+# added by Steven Hur
+# simple message printer for --recent flag
+def write_recent_changes_summary(f, num_files):
+    print("Writing recent changes Summary...")
+    f.write("## Recent Changes Summary (Past 7 days)\n\n")
+    f.write(f"- Found {num_files} recently modified files.\n\n")
 
 def write_file_location(f, input_path):
     print("Writing file system location...")
@@ -30,18 +48,30 @@ def write_git_info(f, path):
     else:
         f.write("Not a git repository\n\n")
 
-def write_struct_tree(f, path, files):
+# modified by Steven Hur
+# added recent_only parameter
+def write_struct_tree(f, path, files, recent_only=False, output_filename=None):
     print("Writing Structure Tree...")
 
     def print_tree(f, path, root_path, prefix=""):
         f.write(f"{prefix}{path.name}/\n")
         for child in path.iterdir():
+            # ignores the output.txt file. If you want to include output file, delete this if statement
+            if child.name == output_filename:
+                continue
             if not child.name.startswith("."): #hidden files/directories are not shown for clarity
                 if child.is_dir():
                     print_tree(f, child, root_path, prefix + "  ")
                 else:
-                    f.write(f"{prefix}  {child.name}\n")
-                    files.append(child.relative_to(root_path)) #add to files list
+                    # if --recent flag is typed, add modified files to the list
+                    if recent_only:
+                        if is_recently_modified(child):
+                            f.write(f"{prefix} {child.name}\n")
+                            files.append(child.relative_to(root_path))
+                    else:
+                        # else, all files are added to the list
+                        f.write(f"{prefix}  {child.name}\n")
+                        files.append(child.relative_to(root_path)) #add to files list
 
     f.write("## Structure (hidden files/directories are not shown for clarity)\n\n```\n")
     path = Path(path).resolve()
@@ -84,7 +114,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser("Pack Git Repository into a text file for use in LLM.")
     parser.add_argument("path", help="Path to the repository / files in the same repository")
     parser.add_argument("--output", "-o", help="Output filename", default="repo-context.txt")
-    
+    # --recent flag added
+    parser.add_argument("--recent", "-r", help="Only includes files modified within the last 7 days", action="store_true")
+
     args = parser.parse_args()
 
     #initialize variables
@@ -92,6 +124,7 @@ if __name__ == "__main__":
     filename = args.output
     files = []
     n_of_lines = 0
+    recent_only = args.recent # --recent flag
 
     #open file
     f = open_file(filename)
@@ -101,7 +134,10 @@ if __name__ == "__main__":
     print("Writing file...")
     write_file_location(f, path)
     write_git_info(f, path)
-    write_struct_tree(f, path, files)
+    write_struct_tree(f, path, files, recent_only, filename) # added recent_only and filename
+    # display summary for --recent tag.
+    if recent_only:
+        write_recent_changes_summary(f, len(files))
     n_of_lines = write_file_contents(f, path, files)
     write_summary(f, files, n_of_lines)
 
