@@ -21,6 +21,7 @@ def is_recently_modified(file_path, days = 7):
         return time_difference <= timedelta(days=days).total_seconds()
     except FileNotFoundError:
         return False
+    
 # added by Steven Hur
 # simple message printer for --recent flag
 def write_recent_changes_summary(f, num_files):
