@@ -91,7 +91,11 @@ def write_file_contents(ostream, paths, files, path_is_dir, recent_day):
     if ostream != sys.stdout:
         print("Writing file contents...")
 
-    ostream.write("## File Contents\n\n")
+    ostream.write("## File Contents\n")
+    if recent_day:
+        ostream.write("[Only the recently modified files would be included here]\n\n")
+    else:
+        ostream.write("\n")
 
     n_of_lines = 0
     n_of_recent = 0
