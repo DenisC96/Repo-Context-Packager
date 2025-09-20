@@ -1,6 +1,7 @@
 # Repo-Context-Packager
 
-Pack Git Repository into a text file for use in LLM
+Pack Git Repository into a text file for use in LLM  
+Release 0.1
 
 ## Instruction for Windows Users:
 
