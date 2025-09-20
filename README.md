@@ -91,3 +91,7 @@ Run the script by the following command:
 ```bash
 python3 pack-repo.py repo-path [-r [DAYS]] [-o] [output-file-name]
 ```
+
+## License:
+
+This project is licensed under BSD 2-Clause License.
