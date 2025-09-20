@@ -18,7 +18,10 @@ or
 py --version
 ```
 
-If Python is not installed, visit https://www.python.org/ to download and install
+If Python is not installed, visit https://www.python.org/ -> Downlaods -> Windows,
+and choose the latest Stable Releases to download and install.
+
+Notes: make sure that the installation path of Python is in Windows PATH
 
 ### Step 1.1
 
@@ -58,7 +61,14 @@ Check if Python is installed in the system by the following command:
 python3 --version
 ```
 
-If Python is not installed, visit https://www.python.org/ to download and install
+If Python is not installed, visit https://www.python.org/ -> Downlaods -> macOS,
+and choose the latest Stable Releases to download and install.
+
+Alternatively, user can check if **brew** is available using command `brew --version`, and use **brew** to install Python with the following command:
+
+```sh
+brew install python
+```
 
 ### Step 1.1
 
