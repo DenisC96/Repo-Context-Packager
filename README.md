@@ -51,6 +51,20 @@ or
 py pack-repo.py repo-path [-r [DAYS]] [-o] [output-file-name]
 ```
 
+Details for arguments and options are listed below:
+[-h] [--version] [--output [OUTPUT]] [--include INCLUDE] [--all] [--recent [RECENT]] paths [paths ...]
+
+positional arguments:
+paths Path to the repository / files in the same repository
+
+options:
+-h, --help show this help message and exit
+--version, -v show program's version number and exit
+--output, -o [OUTPUT] Output filename
+--include, -i INCLUDE Extensions to be included, separated by ",", e.g. "_.js,_.txt"
+--all, -a Show all files including hidden files (files that start with ".")
+--recent, -r [RECENT] Only include files modified within the last 7 days
+
 ## Instruction for Mac/Linux Users:
 
 ### Step 1
@@ -91,6 +105,20 @@ Run the script by the following command:
 ```bash
 python3 pack-repo.py repo-path [-r [DAYS]] [-o] [output-file-name]
 ```
+
+Details for arguments and options are listed below:
+[-h] [--version] [--output [OUTPUT]] [--include INCLUDE] [--all] [--recent [RECENT]] paths [paths ...]
+
+positional arguments:
+paths Path to the repository / files in the same repository
+
+options:
+-h, --help show this help message and exit
+--version, -v show program's version number and exit
+--output, -o [OUTPUT] Output filename
+--include, -i INCLUDE Extensions to be included, separated by ",", e.g. "_.js,_.txt"
+--all, -a Show all files including hidden files (files that start with ".")
+--recent, -r [RECENT] Only include files modified within the last 7 days
 
 ## License:
 
