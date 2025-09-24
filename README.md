@@ -53,7 +53,7 @@ py pack-repo.py repo-path [-r [DAYS]] [-o] [output-file-name]
 ```
 
 Details for arguments and options are listed below:  
-**[-h] [--version] [--output [OUTPUT]] [--include INCLUDE] [--all] [--recent [RECENT]] paths [paths ...]**
+**[-h] [--version] [--output [OUTPUT]] [--include INCLUDE] [--all] [--recent [RECENT]] [--line-number] paths [paths ...]**
 
 | positional arguments | description                                           |
 | -------------------- | ----------------------------------------------------- |
@@ -67,6 +67,7 @@ Details for arguments and options are listed below:
 | **--include, -i**         | INCLUDE Extensions to be included, separated by ",", e.g. "_.js,_.txt" |
 | **--all, -a**             | Show all files including hidden files (files that start with ".")      |
 | **--recent, -r [RECENT]** | Only include files modified within the last 7 days                     |
+| **--line-number, -l**     | Include line number when displaying file content output                |
 
 ## Instruction for Mac/Linux Users:
 
@@ -110,7 +111,7 @@ python3 pack-repo.py repo-path [-r [DAYS]] [-o] [output-file-name]
 ```
 
 Details for arguments and options are listed below:  
-**[-h] [--version] [--output [OUTPUT]] [--include INCLUDE] [--all] [--recent [RECENT]] paths [paths ...]**
+**[-h] [--version] [--output [OUTPUT]] [--include INCLUDE] [--all] [--recent [RECENT]] [--line-number] paths [paths ...]**
 
 | positional arguments | description                                           |
 | -------------------- | ----------------------------------------------------- |
@@ -124,6 +125,7 @@ Details for arguments and options are listed below:
 | **--include, -i**         | INCLUDE Extensions to be included, separated by ",", e.g. "_.js,_.txt" |
 | **--all, -a**             | Show all files including hidden files (files that start with ".")      |
 | **--recent, -r [RECENT]** | Only include files modified within the last 7 days                     |
+| **--line-number, -l**     | Include line number when displaying file content output                |
 
 ## License:
 

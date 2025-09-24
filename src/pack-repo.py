@@ -131,7 +131,7 @@ def write_file_contents(ostream, paths, files, path_is_dir, recent_day, show_lin
                 with open(abs_file_path, "r") as f_in:
                     for line_number, line in enumerate(f_in, start=1):
                         if show_line_number:
-                            ostream.write(line_number, ' ')
+                            ostream.write(f"{line_number}: ")
                         ostream.write(line)
                         n_of_lines += 1
                 ostream.write("\n```\n\n")
@@ -193,7 +193,7 @@ if __name__ == "__main__":
     n_of_recent = 0
     path_is_dir = False
     show_hidden = args.all
-    show_line_number = args.line-number
+    show_line_number = args.line_number
     
     inc_exts = "all"
     if args.include != None:
