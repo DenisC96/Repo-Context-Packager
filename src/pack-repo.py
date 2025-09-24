@@ -140,14 +140,15 @@ def write_file_contents(ostream, paths, files, path_is_dir, recent_day, show_lin
                 sys.stderr.write(f"**Unable to read file {file}**\n")
     return n_of_recent, n_of_lines
 
-def write_summary(ostream, files, n_of_recent, n_of_lines, show_recent_only):
+def write_summary(ostream, files, n_of_recent, n_of_lines, show_recent_only, show_dirs_only):
     if ostream != sys.stdout:
         print("Writing summary...")
     ostream.write("## Summary\n\n")
     ostream.write(f"- Total files: {len(files)}\n")
-    if show_recent_only:
-        ostream.write(f"- Total recent files: {n_of_recent}\n")
-    ostream.write(f"- Total lines: {n_of_lines}\n")
+    if not show_dirs_only:
+        if show_recent_only:
+            ostream.write(f"- Total recent files: {n_of_recent}\n")
+        ostream.write(f"- Total lines: {n_of_lines}\n")
 
 # Lab2 - add --recent flag (Added by Steven Hur)
 def is_recently_modified(file_path, days=None):
@@ -182,6 +183,7 @@ if __name__ == "__main__":
     parser.add_argument("--all", "-a", action="store_true", help='Show all files including hidden files (files that start with ".")')
     parser.add_argument("--recent", "-r", nargs="?", help="Only include files modified within the last 7 days", const=7, type=int)
     parser.add_argument("--line-number", "-l", action="store_true", help="Include line number when displaying file content output")
+    parser.add_argument("--dirs-only", "-d", action="store_true", help="Show only directory structure tree without file contents")
 
     args = parser.parse_args()
 
@@ -194,6 +196,7 @@ if __name__ == "__main__":
     path_is_dir = False
     show_hidden = args.all
     show_line_number = args.line_number
+    show_dirs_only = args.dirs_only
     
     inc_exts = "all"
     if args.include != None:
@@ -226,10 +229,11 @@ if __name__ == "__main__":
     write_file_location(ostream, paths, path_is_dir)
     write_git_info(ostream, paths, path_is_dir)
     write_struct_tree(ostream, paths, files, path_is_dir, inc_exts, show_hidden)
-    n_of_recent, n_of_lines = write_file_contents(ostream, paths, files, path_is_dir, args.recent, show_line_number)
-    if args.recent:
-        write_recent_changes_summary(ostream, n_of_recent)
-    write_summary(ostream, files, n_of_recent, n_of_lines, args.recent)
+    if not show_dirs_only:
+        n_of_recent, n_of_lines = write_file_contents(ostream, paths, files, path_is_dir, args.recent, show_line_number)
+        if args.recent:
+            write_recent_changes_summary(ostream, n_of_recent)
+    write_summary(ostream, files, n_of_recent, n_of_lines, args.recent, show_dirs_only)
 
     #program complete
     if filename:
