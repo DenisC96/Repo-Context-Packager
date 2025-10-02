@@ -2,6 +2,8 @@ import argparse
 import sys
 import re
 import time
+import tomli
+import os
 from pathlib import Path
 from git import Repo
 from pygments.lexers import guess_lexer_for_filename
@@ -185,8 +187,25 @@ if __name__ == "__main__":
     parser.add_argument("--line-number", "-l", action="store_true", help="Include line number when displaying file content output")
     parser.add_argument("--dirs-only", "-d", action="store_true", help="Show only directory structure tree without file contents")
 
-    args = parser.parse_args()
+    # Load configuration from pyproject.toml if it exists
+    CONFIG_FILE = ".pack-repo.toml"
+    config = {}
 
+    if os.path.exists(CONFIG_FILE):
+        try:
+            with open(CONFIG_FILE, "rb") as f:
+                config_from_file = tomli.load(f)
+                config = {k.replace('-', '_'): v for k, v in config_from_file.items()}
+        except tomli.TOMLDecodeError:
+            print(f"Error: Could not parse {CONFIG_FILE}. Please check its format.")
+            sys.exit(1)
+    
+    # merge config file options with argparse
+    if config:
+        parser.set_defaults(**config)
+
+    args = parser.parse_args()
+                
     #initialize variables
     paths = args.paths
     filename = args.output
