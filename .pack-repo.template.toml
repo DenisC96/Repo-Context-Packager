@@ -1,0 +1,22 @@
+# This is an example configuration file for the Repo-Context-Packager.
+# To use it, copy this file to the same location with `pack-repo.py` and edit the values.
+# Command-line arguments will always override the settings in this file.
+# Priority Logic:
+# 1. Command-Line Arguments (Highest Priority)
+# 2. Values from .pack-repo.toml
+# 3. ardcoded Defaults
+
+# The name of the output file. If not set, output will be printed to the console.
+# output = "repo-context.txt"
+
+# Set to 'true' to include hidden files and folders (those starting with a '.').
+# all = false
+
+# Set to an integer to only include files modified within the last N days.
+# recent = 7
+
+# Set to 'true' to include line numbers in the file content output.
+# line-number = false
+
+# Set to 'true' to only show the directory structure without file contents.
+# dirs-only = false

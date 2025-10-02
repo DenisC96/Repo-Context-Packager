@@ -129,6 +129,15 @@ Details for arguments and options are listed below:
 | **--line-number, -l**     | Include line number when displaying file content output                |
 | **--dirs-only, -d**       | Show only directory structure tree without file contents               |
 
+## .TOML Configuration File
+You can use a ```.pack-repo.toml``` file in the project's root directory to set default options for this script.
+To get started, copy the template file to src/:
+```bash
+cp .pack-repo.toml.example .pack-repo.toml
+```
+Then, open and edit ```.pack-repo.toml``` to set your preferred defaults.
+**IMPORTANT:** Command-line arguments will always override any settings from the ```.pack-repo.toml``` file.
+
 ## License:
 
 This project is licensed under BSD 2-Clause License.
