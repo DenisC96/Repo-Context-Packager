@@ -130,13 +130,24 @@ Details for arguments and options are listed below:
 | **--dirs-only, -d**       | Show only directory structure tree without file contents               |
 
 ## .TOML Configuration File
-You can use a ```.pack-repo.toml``` file in the project's root directory to set default options for this script.
-To get started, copy the template file to src/:
+
+You can use a `.pack-repo.toml` file in the same directory of pack-repo.py to set default options for this script.
+To get started, go to the root directory of this repo, and copy the template file to src/ by the following command:
+
+On Mac:
+
 ```bash
-cp .pack-repo.toml.example .pack-repo.toml
+cp .pack-repo.template.toml src/.pack-repo.toml
 ```
-Then, open and edit ```.pack-repo.toml``` to set your preferred defaults.
-**IMPORTANT:** Command-line arguments will always override any settings from the ```.pack-repo.toml``` file.
+
+On Windows:
+
+```cmd
+copy .pack-repo.template.toml src\.pack-repo.toml
+```
+
+Then, open and edit `.pack-repo.toml` to set your preferred defaults.
+**IMPORTANT:** Command-line arguments will always override any settings from the `.pack-repo.toml` file.
 
 ## License:
 
