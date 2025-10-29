@@ -17,6 +17,7 @@ class ArgParser:
         parser.add_argument("--recent", "-r", nargs="?", help="Only include files modified within the last 7 days", const=7, type=int)
         parser.add_argument("--line-number", "-l", action="store_true", help="Include line number when displaying file content output")
         parser.add_argument("--dirs-only", "-d", action="store_true", help="Show only directory structure tree without file contents")
+        parser.add_argument("--remove-empty-lines", action="store_true", help='Remove all empty lines in file contents')
 
         return parser
 

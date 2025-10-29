@@ -25,6 +25,7 @@ if __name__ == "__main__":
     show_hidden = args.all
     show_line_number = args.line_number
     show_dirs_only = args.dirs_only
+    empty_lines_removed = args.remove_empty_lines
     writer = ContentWriter()
     
     #check file extensions to include in the output
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     writer.write_git_info(ostream, paths, path_is_dir)
     writer.write_struct_tree(ostream, paths, files, path_is_dir, inc_exts, show_hidden)
     if not show_dirs_only:
-        n_of_recent, n_of_lines = writer.write_file_contents(ostream, paths, files, path_is_dir, args.recent, show_line_number)
+        n_of_recent, n_of_lines = writer.write_file_contents(ostream, paths, files, path_is_dir, args.recent, show_line_number, empty_lines_removed)
         if args.recent:
             writer.write_recent_changes_summary(ostream, n_of_recent)
     writer.write_summary(ostream, files, n_of_recent, n_of_lines, args.recent, show_dirs_only)

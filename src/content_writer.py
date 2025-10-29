@@ -89,7 +89,12 @@ class ContentWriter:
         print_tree(ostream, parent_path, parent_path)
         ostream.write("```\n\n")
 
-    def write_file_contents(self, ostream, paths, files, path_is_dir, recent_day, show_line_number):
+    def write_file_contents(self, ostream, paths, files, path_is_dir, recent_day, show_line_number, empty_lines_removed):
+        def remove_empty_lines(content):
+            lines = content.split('\n')
+            lines = [line for line in lines if line.strip() != ""]
+            return '\n'.join(lines)
+        
         if ostream != sys.stdout:
             print("Writing file contents...")
 
@@ -131,6 +136,7 @@ class ContentWriter:
 
                 try:
                     with open(abs_file_path, "r") as f_in:
+                        # empty_lines_removed flag to be checked, and logic to be changed
                         for line_number, line in enumerate(f_in, start=1):
                             if show_line_number:
                                 ostream.write(f"{line_number}: ")
