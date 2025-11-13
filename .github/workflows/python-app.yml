@@ -38,4 +38,4 @@ jobs:
       env:
         PYTHONPATH: ${{ github.workspace }}/src
       run: |
-        pytest -v
+        pytest test*.py -v
