@@ -38,4 +38,5 @@ jobs:
       env:
         PYTHONPATH: ${{ github.workspace }}/src
       run: |
+        export PYTHONPATH=$PYTHONPATH:$(pwd)/src
         pytest tests/ -v
