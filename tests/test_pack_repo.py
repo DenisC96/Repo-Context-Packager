@@ -4,8 +4,8 @@ import os
 import time
 import io
 from pathlib import Path
-from src.content_writer import ContentWriter
-import src.util as util
+from content_writer import ContentWriter
+import util
 
 class TestUtil(unittest.TestCase):
     #Tests for check_exts_to_include
