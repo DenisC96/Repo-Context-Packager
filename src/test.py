@@ -102,7 +102,7 @@ class TestContentWriter(unittest.TestCase):
         )
 
         output = ostream.getvalue()
-        self.assertIn("## Summary1", output)
+        self.assertIn("## Summary", output)
         self.assertIn("- Total files: 3", output)
         self.assertIn("- Total recent files: 2", output)
         self.assertIn("- Total lines: 50", output)
