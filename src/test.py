@@ -2,9 +2,10 @@ import unittest
 import tempfile
 import os
 import time
+import io
 from pathlib import Path
-import util
 from content_writer import ContentWriter
+import util
 
 class TestUtil(unittest.TestCase):
     #Tests for check_exts_to_include
@@ -65,6 +66,46 @@ class TestContentWriter(unittest.TestCase):
         self.assertFalse(writer.is_recently_modified(tmp_path, 7))
 
         os.remove(tmp_path)
+    
+    # Tests for write_summary
+    def test_write_summary_dirs_only(self):
+        writer = ContentWriter()
+        ostream = io.StringIO()
+        files = ["file1.txt", "file2.txt"]
+
+        writer.write_summary(
+            ostream=ostream,
+            files=files,
+            n_of_recent=0,
+            n_of_lines=0,
+            show_recent_only=False,
+            show_dirs_only=True
+        )
+
+        output = ostream.getvalue()
+        self.assertIn("## Summary", output)
+        self.assertIn("- Total files: 2", output)
+        self.assertNotIn("Total lines", output)
+
+    def test_write_summary_with_recent_files(self):
+        writer = ContentWriter()
+        ostream = io.StringIO()
+        files = ["file1.txt", "file2.txt", "file3.txt"]
+
+        writer.write_summary(
+            ostream=ostream,
+            files=files,
+            n_of_recent=2,
+            n_of_lines=50,
+            show_recent_only=True,
+            show_dirs_only=False
+        )
+
+        output = ostream.getvalue()
+        self.assertIn("## Summary", output)
+        self.assertIn("- Total files: 3", output)
+        self.assertIn("- Total recent files: 2", output)
+        self.assertIn("- Total lines: 50", output)
 
 if __name__ == "__main__":
     unittest.main()
