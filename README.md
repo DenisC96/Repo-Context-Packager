@@ -27,12 +27,12 @@ Notes: make sure that the installation path of Python is in Windows PATH
 
 ### Step 1.1
 
-Download **requirement.txt** from the repository.
+Go to root directory of the repository.  
 
 Install dependencies by the following commands:
 
 ```cmd
-py -m pip install -r requirement.txt
+py -m pip install -r requirements.txt
 ```
 
 ### Step 2
@@ -95,12 +95,12 @@ brew install python
 
 ### Step 1.1
 
-Download **requirement.txt** from the repository.
+Go to root directory of the repository.  
 
 Install dependencies by the following commands:
 
 ```bash
-python3 -m pip install -r requirement.txt
+python3 -m pip install -r requirements.txt
 ```
 
 ### Step 2
@@ -144,13 +144,13 @@ To get started, go to the root directory of this repo, and copy the template fil
 On Mac:
 
 ```bash
-cp .pack-repo.template.toml src/.pack-repo.toml
+cp .pack-repo.template.toml src/repo_context_packager/.pack-repo.toml
 ```
 
 On Windows:
 
 ```cmd
-copy .pack-repo.template.toml src\.pack-repo.toml
+copy .pack-repo.template.toml src\repo_context_packager\.pack-repo.toml
 ```
 
 Then, open and edit `.pack-repo.toml` to set your preferred defaults.
