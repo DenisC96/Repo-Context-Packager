@@ -36,7 +36,10 @@ py -m pip install -r requirement.txt
 
 ### Step 2
 
-Download **pack-repo.py** in **src** directory to your local machine
+Change directory to **src/repo_context_packager** with the following command:
+```cmd
+cd src\repo_context_packager
+```
 
 ### Step 3
 
@@ -101,7 +104,10 @@ python3 -m pip install -r requirement.txt
 
 ### Step 2
 
-Download **pack-repo.py** in **src** directory to your local machine
+Change directory to **src/repo_context_packager** with the following command:
+```bash
+cd src/repo_context_packager
+```
 
 ### Step 3
 
