@@ -1,7 +1,8 @@
 # Repo-Context-Packager
 
 Pack Git Repository into a text file for use in LLM  
-Release 0.1
+https://pypi.org/project/repo-context-packager/1.0.0/  
+Release 1.0.0
 
 ## Instruction for Windows Users:
 
