@@ -5,7 +5,7 @@ import argparse
 import sys
 from io import BytesIO
 
-src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src'))
+src_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src', 'repo_context_packager'))
 sys.path.insert(0, src_dir)
 
 from arg_parser import ArgParser

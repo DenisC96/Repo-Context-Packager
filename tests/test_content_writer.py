@@ -4,7 +4,7 @@ import os
 import time
 import io
 from pathlib import Path
-from content_writer import ContentWriter
+from src.repo_context_packager.content_writer import ContentWriter
 
 class TestContentWriter(unittest.TestCase):
     #Tests for is_recently_modified
