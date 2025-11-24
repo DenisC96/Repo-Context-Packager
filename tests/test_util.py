@@ -1,7 +1,7 @@
 import unittest
 import tempfile
 from pathlib import Path
-import src.repo_context_packager.util as util
+import repo_context_packager.util as util
 
 class TestUtil(unittest.TestCase):
     #Tests for check_exts_to_include
